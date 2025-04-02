@@ -9,7 +9,7 @@ public class MyDatabaseManager implements DatabaseManager {
     public void createTable(String fileName, List<Field> fields) {
         try (BlockManager blockManager = new BlockManager(fileName)) {
             ByteBuffer headerBlock = blockManager.readBlock(0);
-            headerBlock.clear();
+            headerBlock.clear(); // FIXME: this gonna overwrite file
 
             // pointer
             headerBlock.putShort((short) 0); // block
