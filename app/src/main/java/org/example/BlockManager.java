@@ -41,7 +41,7 @@ public class BlockManager implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws IOException {
         flush();
         fileChannel.force(true);
         fileChannel.close();
