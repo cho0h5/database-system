@@ -3,12 +3,62 @@
  */
 package org.example;
 
-public class App {
-    public String getGreeting() {
-        return "Hello World!";
+import java.util.List;
+
+class DatabaseManager {
+    public void createTable() {
     }
 
+    public void insertRecord() {
+    }
+
+    public void insertRecords() {
+    }
+
+    public void searchField() {
+    }
+
+    public void searchRecord() {
+    }
+}
+
+interface Command {
+    void execute();
+}
+
+class CreateTableCommand implements Command {
+    public void execute() {
+    }
+}
+
+class InsertRecordCommand implements Command {
+    public void execute() {
+    }
+}
+
+class SearchFieldCommand implements Command {
+    public void execute() {
+    }
+}
+
+class SearchRecordCommand implements Command {
+    public void execute() {
+    }
+}
+
+class CommandParser {
+    public static List<Command> parseCommands(DatabaseManager databaseManager) {
+        return null;
+    }
+}
+
+public class App {
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        DatabaseManager databaseManager = new DatabaseManager();
+        List<Command> commands = CommandParser.parseCommands(databaseManager);
+
+        for (Command command : commands) {
+            command.execute();
+        }
     }
 }
