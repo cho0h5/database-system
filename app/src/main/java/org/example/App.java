@@ -4,22 +4,41 @@
 package org.example;
 
 import java.util.List;
+import java.util.Optional;
 
 class DatabaseManager {
-    public void createTable() {
+    public void createTable(String fileName, List<Field> fields) {
     }
 
-    public void insertRecord() {
+    public void insertRecord(String fieldName, Record record) {
     }
 
-    public void insertRecords() {
+    public void insertRecords(String fileName, List<Record> records) {
+        for (Record record : records) {
+            insertRecord(fileName, record);
+        }
     }
 
-    public void searchField() {
+    public void searchField(String fileName, String fieldName) {
     }
 
-    public void searchRecord() {
+    public void searchRecord(String fileName, String fieldName, String minValue,
+            String maxValue) {
     }
+}
+
+class Field {
+    String name;
+    int size;
+
+    public Field(String name, int size) {
+        this.name = name;
+        this.size = size;
+    }
+}
+
+class Record {
+    List<Optional<String>> fields;
 }
 
 interface Command {
@@ -27,22 +46,71 @@ interface Command {
 }
 
 class CreateTableCommand implements Command {
+    private final DatabaseManager databaseManager;
+    private final String fileName;
+    private final List<Field> fields;
+
+    public CreateTableCommand(DatabaseManager databaseManager, String fileName, List<Field> fields) {
+        this.databaseManager = databaseManager;
+        this.fileName = fileName;
+        this.fields = fields;
+    }
+
     public void execute() {
+        databaseManager.createTable(fileName, fields);
     }
 }
 
 class InsertRecordCommand implements Command {
+    private final DatabaseManager databaseManager;
+    private final String fileName;
+    private final List<Record> records;
+
+    public InsertRecordCommand(DatabaseManager databaseManager, String fileName, List<Record> records) {
+        this.databaseManager = databaseManager;
+        this.fileName = fileName;
+        this.records = records;
+    }
+
     public void execute() {
+        databaseManager.insertRecords(fileName, records);
     }
 }
 
 class SearchFieldCommand implements Command {
+    private final DatabaseManager databaseManager;
+    private final String fileName;
+    private final String fieldName;
+
+    public SearchFieldCommand(DatabaseManager databaseManager, String fileName, String fieldName) {
+        this.databaseManager = databaseManager;
+        this.fileName = fileName;
+        this.fieldName = fieldName;
+    }
+
     public void execute() {
+        databaseManager.searchField(fileName, fieldName);
     }
 }
 
 class SearchRecordCommand implements Command {
+    private final DatabaseManager databaseManager;
+    private final String fileName;
+    private final String fieldName;
+    private final String minValue;
+    private final String maxValue;
+
+    public SearchRecordCommand(DatabaseManager databaseManager, String fileName, String fieldName, String minValue,
+            String maxValue) {
+        this.databaseManager = databaseManager;
+        this.fileName = fileName;
+        this.fieldName = fieldName;
+        this.minValue = minValue;
+        this.maxValue = maxValue;
+    }
+
     public void execute() {
+        databaseManager.searchRecord(fileName, fieldName, minValue, maxValue);
     }
 }
 
