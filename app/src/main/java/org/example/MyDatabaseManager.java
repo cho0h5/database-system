@@ -2,9 +2,33 @@ package org.example;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
-public class MyDatabaseManager implements DatabaseManager {
+class Metadata {
+    private int firstRecordBlock;
+    private int firstRecordOffset;
+    private final List<Field> fields = new ArrayList<>();;
+
+    public Metadata(ByteBuffer headerBlock) {
+        this.firstRecordBlock = Short.toUnsignedInt(headerBlock.getShort());
+        this.firstRecordOffset = Short.toUnsignedInt(headerBlock.getShort());
+
+        final int fieldCount = Byte.toUnsignedInt(headerBlock.get());
+        for (int i = 0; i < fieldCount; i++) {
+            int nameLength = Byte.toUnsignedInt(headerBlock.get());
+            byte[] nameBytes = new byte[nameLength];
+            headerBlock.get(nameBytes);
+            String fieldName = new String(nameBytes);
+
+            int fieldSize = Byte.toUnsignedInt(headerBlock.get());
+
+            fields.add(new Field(fieldName, fieldSize));
+        }
+    }
+}
+
+class MyDatabaseManager implements DatabaseManager {
     @Override
     public void createTable(String fileName, List<Field> fields) {
         try (BlockManager blockManager = new BlockManager(fileName)) {
@@ -31,10 +55,20 @@ public class MyDatabaseManager implements DatabaseManager {
         }
     }
 
+    public void insertRecord(String fileName, Record record) {
+        try (BlockManager blockManager = new BlockManager(fileName)) {
+            ByteBuffer headerBlock = blockManager.readBlock(0);
+            Metadata metadata = new Metadata(headerBlock);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void insertRecords(String fileName, List<Record> records) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'insertRecords'");
+        for (Record record : records) {
+            insertRecord(fileName, record);
+        }
     }
 
     @Override
