@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BlockManager implements AutoCloseable {
-    public static final int BLOCK_SIZE = 4096;
+    public static final int BLOCK_SIZE = 256;
 
     private final FileChannel fileChannel;
     private final Map<Integer, ByteBuffer> cache = new HashMap<>();
@@ -36,7 +36,7 @@ public class BlockManager implements AutoCloseable {
     public void flush() throws IOException {
         for (Map.Entry<Integer, ByteBuffer> entry : cache.entrySet()) {
             fileChannel.position((long) entry.getKey() * BLOCK_SIZE);
-            fileChannel.write(entry.getValue());
+            fileChannel.write(entry.getValue().rewind());
         }
     }
 
