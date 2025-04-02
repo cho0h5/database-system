@@ -187,7 +187,7 @@ class CommandParser {
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine().trim();
             if (!line.isEmpty() && !line.startsWith("//")) {
-                return Optional.of(line);
+                return Optional.of(line.split("//")[0].trim());
             }
         }
         return Optional.empty();
@@ -196,10 +196,16 @@ class CommandParser {
 
 public class App {
     public static void main(String[] args) {
+        if (args.length != 1) {
+            System.err.println("Wrong argument");
+            return;
+        }
+
+        String fileName = args[0];
         DatabaseManager databaseManager = new DatabaseManager();
 
         try {
-            List<Command> commands = CommandParser.parseCommands(databaseManager, "test1.txt");
+            List<Command> commands = CommandParser.parseCommands(databaseManager, fileName);
 
             for (Command command : commands) {
                 command.execute();
