@@ -1,0 +1,93 @@
+// test-input.txt
+17 // 실행하고자하는 명령 개수
+
+create-table // 파일 생성 명령
+book.db      // 파일 이름
+3            // 생성하고자하는 필드 수
+id 4         // 첫 번째 필드 이름과 크기 / 첫 필드가 search key
+title 16     // 두 번째 필드 이름과 크기
+author 20    // 세 번째 필드 이름과 크기
+
+insert-record              // 레코드 추가 명령
+book.db                    // 파일 이름
+1                          // 추가하고자하는 레코드 수
+0001;The Selfish Gene;null // 추가하려는 레코드 내용
+
+search-field // 필드 검색 명령
+book.db      // 파일 이름
+id           // 검색하고자하는 필드 이름
+
+search-field
+book.db
+title
+
+search-field
+book.db
+author
+
+search-record // 레코드 검색 명령
+book.db       // 파일 이름
+id            // 검색하고자하는 필드 이름
+0000          // 검색 범위 최솟값
+9999          // 검색 범위 최댓값
+
+insert-record
+book.db
+9
+0002;null            ;null
+0003;What If?........;Randall Munroe......
+0004;null            ;Carl Sagan..........
+0005;Self Reliance...;Ralph Waldo Emerson.
+0006;Animal Farm.....;George Orwell.......
+0007;The Talmud......;null
+0008;The Crowd.......;Gustave Le Bon......
+0009;null            ;null
+0010;The Bible.......;null
+
+search-field
+book.db
+id
+
+search-field
+book.db
+title
+
+search-field
+book.db
+author
+
+insert-record
+book.db
+2
+0011;null            ;Dale Carnegie.......
+0012;The Analects....;Confucius...........
+
+search-field
+book.db
+id
+
+search-field
+book.db
+title
+
+search-field
+book.db
+author
+
+search-record // 레코드 검색 명령
+book.db       // 파일 이름
+id            // 검색하고자하는 필드 이름
+0002          // 검색 범위 최솟값
+0003          // 검색 범위 최댓값
+
+search-record
+book.db
+title
+LLLLLLLLLLLLLLLL
+ZZZZZZZZZZZZZZZZ
+
+search-record
+book.db
+author
+AAAAAAAAAAAAAAAAAAAA
+FFFFFFFFFFFFFFFFFFFF
