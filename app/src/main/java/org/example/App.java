@@ -22,27 +22,6 @@ class Record {
     }
 }
 
-class DatabaseManager {
-    public void createTable(String fileName, List<Field> fields) {
-    }
-
-    public void insertRecord(String fieldName, Record record) {
-    }
-
-    public void insertRecords(String fileName, List<Record> records) {
-        for (Record record : records) {
-            insertRecord(fileName, record);
-        }
-    }
-
-    public void searchField(String fileName, String fieldName) {
-    }
-
-    public void searchRecord(String fileName, String fieldName, String minValue,
-            String maxValue) {
-    }
-}
-
 public class App {
     public static void main(String[] args) {
         if (args.length != 1) {
@@ -51,7 +30,7 @@ public class App {
         }
 
         String fileName = args[0];
-        DatabaseManager databaseManager = new DatabaseManager();
+        DatabaseManager databaseManager = new MyDatabaseManager();
 
         try {
             List<Command> commands = CommandParser.parseCommands(databaseManager, fileName);
