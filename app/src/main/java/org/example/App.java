@@ -3,8 +3,14 @@
  */
 package org.example;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
+import java.util.stream.Collectors;
 
 class DatabaseManager {
     public void createTable(String fileName, List<Field> fields) {
@@ -39,6 +45,10 @@ class Field {
 
 class Record {
     List<Optional<String>> fields;
+
+    public Record(List<Optional<String>> fields) {
+        this.fields = fields;
+    }
 }
 
 interface Command {
@@ -115,18 +125,87 @@ class SearchRecordCommand implements Command {
 }
 
 class CommandParser {
-    public static List<Command> parseCommands(DatabaseManager databaseManager) {
-        return null;
+    public static List<Command> parseCommands(DatabaseManager databaseManager, String filePath)
+            throws FileNotFoundException {
+        final List<Command> commands = new ArrayList<>();
+        final Scanner scanner = new Scanner(new File(filePath));
+        final int commandCount = nextValidLine(scanner).map(Integer::parseInt).orElseThrow();
+        for (int i = 0; i < commandCount && scanner.hasNextLine(); i++) {
+            commands.add(parseCommands(databaseManager, scanner));
+        }
+        return commands;
+    }
+
+    public static Command parseCommands(DatabaseManager databaseManager, Scanner scanner) {
+        final String commandType = nextValidLine(scanner).orElseThrow();
+        final String fileName = nextValidLine(scanner).orElseThrow();
+        return switch (commandType) {
+            case "create-table" -> parseCreateTableCommand(databaseManager, scanner, fileName);
+            case "insert-record" -> parseInsertRecordCommand(databaseManager, scanner, fileName);
+            case "search-field" -> parseSearchFieldCommand(databaseManager, scanner, fileName);
+            case "search-record" -> parseSearchRecordCommand(databaseManager, scanner, fileName);
+            default -> throw new IllegalArgumentException("Unknown command: " + commandType);
+        };
+    }
+
+    public static Command parseCreateTableCommand(DatabaseManager databaseManager, Scanner scanner, String fileName) {
+        final List<Field> fields = new ArrayList<>();
+        final int fieldCount = nextValidLine(scanner).map(Integer::parseInt).orElseThrow();
+        for (int i = 0; i < fieldCount; i++) {
+            final String[] parts = nextValidLine(scanner).orElseThrow().split(" ");
+            fields.add(new Field(parts[0], Integer.parseInt(parts[1])));
+        }
+        return new CreateTableCommand(databaseManager, fileName, fields);
+    }
+
+    public static Command parseInsertRecordCommand(DatabaseManager databaseManager, Scanner scanner, String fileName) {
+        final List<Record> records = new ArrayList<>();
+        final int recordCount = nextValidLine(scanner).map(Integer::parseInt).orElseThrow();
+        for (int i = 0; i < recordCount; i++) {
+            List<Optional<String>> fields = Arrays.stream(nextValidLine(scanner).orElseThrow().split(";"))
+                    .map(field -> field.equals("null") ? Optional.empty() : Optional.of(field))
+                    .map(option -> option.map(String::valueOf))
+                    .collect(Collectors.toList());
+            records.add(new Record(fields));
+        }
+        return new InsertRecordCommand(databaseManager, fileName, records);
+    }
+
+    public static Command parseSearchFieldCommand(DatabaseManager databaseManager, Scanner scanner, String fileName) {
+        final String fieldName = nextValidLine(scanner).orElseThrow();
+        return new SearchFieldCommand(databaseManager, fileName, fieldName);
+    }
+
+    public static Command parseSearchRecordCommand(DatabaseManager databaseManager, Scanner scanner, String fileName) {
+        final String fieldName = nextValidLine(scanner).orElseThrow();
+        final String minRange = nextValidLine(scanner).orElseThrow();
+        final String maxRange = nextValidLine(scanner).orElseThrow();
+        return new SearchRecordCommand(databaseManager, fileName, fieldName, minRange, maxRange);
+    }
+
+    private static Optional<String> nextValidLine(Scanner scanner) {
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine().trim();
+            if (!line.isEmpty() && !line.startsWith("//")) {
+                return Optional.of(line);
+            }
+        }
+        return Optional.empty();
     }
 }
 
 public class App {
     public static void main(String[] args) {
         DatabaseManager databaseManager = new DatabaseManager();
-        List<Command> commands = CommandParser.parseCommands(databaseManager);
 
-        for (Command command : commands) {
-            command.execute();
+        try {
+            List<Command> commands = CommandParser.parseCommands(databaseManager, "test1.txt");
+
+            for (Command command : commands) {
+                command.execute();
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println(e);
         }
     }
 }
