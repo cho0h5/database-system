@@ -28,6 +28,21 @@ class Metadata {
     }
 }
 
+class Pointer {
+    final int block;
+    final int offset;
+
+    public Pointer(int block, int offset) {
+        this.block = block;
+        this.offset = offset;
+    }
+
+    public void write(ByteBuffer byteBuffer) {
+        byteBuffer.putShort((short) this.block); // block
+        byteBuffer.putShort((short) this.block); // offset
+    }
+}
+
 class MyDatabaseManager implements DatabaseManager {
     @Override
     public void createTable(String fileName, List<Field> fields) {
@@ -36,8 +51,8 @@ class MyDatabaseManager implements DatabaseManager {
             headerBlock.clear(); // FIXME: this gonna overwrite file
 
             // pointer
-            headerBlock.putShort((short) 0); // block
-            headerBlock.putShort((short) 0); // offset
+            final Pointer firstRecordPointer = new Pointer(0, 0);
+            firstRecordPointer.write(headerBlock);
 
             // number of fields
             headerBlock.put((byte) fields.size());
