@@ -24,7 +24,7 @@ class MyDatabaseManager implements DatabaseManager {
         ByteBuffer headerBlock = blockManager.readBlock(0);
         Metadata metadata = new Metadata(headerBlock);
 
-        Pointer lastRecordPointer = findLastRecordPointer(metadata.getFirstRecordPointer());
+        Pointer lastRecordPointer = findLastRecordPointer(blockManager, metadata);
 
         // 1. find last record
         // 2. check if there is enough space for new record
@@ -55,12 +55,19 @@ class MyDatabaseManager implements DatabaseManager {
         throw new UnsupportedOperationException("Unimplemented method 'searchRecord'");
     }
 
-    Pointer findLastRecordPointer(Pointer firstRecordPointer) {
-        if (firstRecordPointer.isNullPointer()) {
-            return firstRecordPointer;
+    Pointer findLastRecordPointer(BlockManager blockManager, final Metadata metadata) {
+        if (metadata.getFirstRecordPointer().isNullPointer()) {
+            return metadata.getFirstRecordPointer();
         }
 
-        return null;
+        Pointer pointer = metadata.getFirstRecordPointer();
+        Record record = new Record(blockManager, metadata.getFields(), pointer);
 
+        while (record.getNextPointer().get().isNullPointer()) {
+            pointer = record.getNextPointer().get();
+            record = new Record(blockManager, metadata.getFields(), pointer);
+        }
+
+        return pointer;
     }
 }

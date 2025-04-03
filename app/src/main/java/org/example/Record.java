@@ -33,4 +33,8 @@ class Record {
 
         this.nextPointer = Optional.of(new Pointer(byteBuffer));
     }
+
+    public Optional<Pointer> getNextPointer() {
+        return nextPointer;
+    }
 }
