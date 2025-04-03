@@ -6,13 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Metadata {
-    private int firstRecordBlock;
-    private int firstRecordOffset;
+    private Pointer firstRecordPointer;
     private final List<Field> fields = new ArrayList<>();;
 
     public Metadata(ByteBuffer headerBlock) {
-        this.firstRecordBlock = Short.toUnsignedInt(headerBlock.getShort());
-        this.firstRecordOffset = Short.toUnsignedInt(headerBlock.getShort());
+        this.firstRecordPointer = new Pointer(headerBlock);
 
         final int fieldCount = Byte.toUnsignedInt(headerBlock.get());
         for (int i = 0; i < fieldCount; i++) {
@@ -35,6 +33,11 @@ class Pointer {
     public Pointer(int block, int offset) {
         this.block = block;
         this.offset = offset;
+    }
+
+    public Pointer(ByteBuffer byteBuffer) {
+        this.block = Short.toUnsignedInt(byteBuffer.getShort());
+        this.offset = Short.toUnsignedInt(byteBuffer.getShort());
     }
 
     public void write(ByteBuffer byteBuffer) {
