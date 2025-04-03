@@ -2,12 +2,16 @@ package org.example;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.List;
 
 class Metadata {
     private Pointer firstRecordPointer;
-    private final List<Field> fields = new ArrayList<>();;
+    private List<Field> fields;
+
+    public Metadata(Pointer firstRecordPointer, List<Field> fields) {
+        this.firstRecordPointer = firstRecordPointer;
+        this.fields = fields;
+    }
 
     public Metadata(ByteBuffer headerBlock) {
         this.firstRecordPointer = new Pointer(headerBlock);
@@ -24,6 +28,19 @@ class Metadata {
             fields.add(new Field(fieldName, fieldSize));
         }
     }
+
+    public void write(ByteBuffer headerBlock) {
+        // pointer
+        firstRecordPointer.write(headerBlock);
+
+        // number of fields
+        headerBlock.put((byte) fields.size());
+
+        // fields
+        for (Field field : fields) {
+            field.write(headerBlock);
+        }
+    }
 }
 
 class MyDatabaseManager implements DatabaseManager {
@@ -33,17 +50,10 @@ class MyDatabaseManager implements DatabaseManager {
             ByteBuffer headerBlock = blockManager.readBlock(0);
             headerBlock.clear(); // FIXME: this gonna overwrite file
 
-            // pointer
             final Pointer firstRecordPointer = new Pointer(0, 0);
-            firstRecordPointer.write(headerBlock);
 
-            // number of fields
-            headerBlock.put((byte) fields.size());
-
-            // fields
-            for (Field field : fields) {
-                field.write(headerBlock);
-            }
+            final Metadata metadata = new Metadata(firstRecordPointer, fields);
+            metadata.write(headerBlock);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
