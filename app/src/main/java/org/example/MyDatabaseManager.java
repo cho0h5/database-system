@@ -55,19 +55,24 @@ class MyDatabaseManager implements DatabaseManager {
         }
     }
 
-    public void insertRecord(String fileName, Record record) {
-        try (BlockManager blockManager = new BlockManager(fileName)) {
-            ByteBuffer headerBlock = blockManager.readBlock(0);
-            Metadata metadata = new Metadata(headerBlock);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void insertRecord(BlockManager blockManager, Record record) {
+        ByteBuffer headerBlock = blockManager.readBlock(0);
+        Metadata metadata = new Metadata(headerBlock);
+
+        // 1. find last record
+        // 2. check if there is enough space for new record
+        // if not, create new block
+        // 3. put it there
     }
 
     @Override
     public void insertRecords(String fileName, List<Record> records) {
-        for (Record record : records) {
-            insertRecord(fileName, record);
+        try (BlockManager blockManager = new BlockManager(fileName)) {
+            for (Record record : records) {
+                insertRecord(blockManager, record);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
