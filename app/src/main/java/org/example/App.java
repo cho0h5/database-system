@@ -2,25 +2,6 @@ package org.example;
 
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Optional;
-
-class Field {
-    String name;
-    int size;
-
-    public Field(String name, int size) {
-        this.name = name;
-        this.size = size;
-    }
-}
-
-class Record {
-    List<Optional<String>> fields;
-
-    public Record(List<Optional<String>> fields) {
-        this.fields = fields;
-    }
-}
 
 public class App {
     public static void main(String[] args) {
