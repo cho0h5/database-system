@@ -20,4 +20,16 @@ class Pointer {
         byteBuffer.putShort((short) this.block); // block
         byteBuffer.putShort((short) this.block); // offset
     }
+
+    public boolean isNullPointer() {
+        return this.block == 0 && this.offset == 0;
+    }
+
+    public int getBlock() {
+        return this.block;
+    }
+
+    public int getOffset() {
+        return this.offset;
+    }
 }

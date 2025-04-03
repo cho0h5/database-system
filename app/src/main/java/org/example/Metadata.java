@@ -33,4 +33,8 @@ class Metadata {
             field.write(headerBlock);
         }
     }
+
+    public Pointer getFirstRecordPointer() {
+        return firstRecordPointer;
+    }
 }
