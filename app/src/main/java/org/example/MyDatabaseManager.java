@@ -62,11 +62,7 @@ class MyDatabaseManager implements DatabaseManager {
 
             // fields
             for (Field field : fields) {
-                byte[] nameBytes = field.name.getBytes();
-
-                headerBlock.put((byte) nameBytes.length); // length of field name
-                headerBlock.put(nameBytes); // field name
-                headerBlock.put((byte) field.size); // field type
+                field.write(headerBlock);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
