@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BlockManager implements AutoCloseable {
-    public static final int BLOCK_SIZE = 256;
+    public static final int BLOCK_SIZE = 128;
 
     private final FileChannel fileChannel;
     private final Map<Integer, ByteBuffer> cache = new HashMap<>();
