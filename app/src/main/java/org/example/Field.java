@@ -11,6 +11,14 @@ class Field {
         this.size = size;
     }
 
+    public Field(ByteBuffer headerBlock) {
+        int nameLength = Byte.toUnsignedInt(headerBlock.get());
+        byte[] nameBytes = new byte[nameLength];
+        headerBlock.get(nameBytes);
+        this.name = new String(nameBytes);
+        this.size = Byte.toUnsignedInt(headerBlock.get());
+    }
+
     public void write(ByteBuffer byteBuffer) {
         byte[] nameBytes = this.name.getBytes();
 

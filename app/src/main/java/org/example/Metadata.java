@@ -17,14 +17,7 @@ class Metadata {
 
         final int fieldCount = Byte.toUnsignedInt(headerBlock.get());
         for (int i = 0; i < fieldCount; i++) {
-            int nameLength = Byte.toUnsignedInt(headerBlock.get());
-            byte[] nameBytes = new byte[nameLength];
-            headerBlock.get(nameBytes);
-            String fieldName = new String(nameBytes);
-
-            int fieldSize = Byte.toUnsignedInt(headerBlock.get());
-
-            fields.add(new Field(fieldName, fieldSize));
+            fields.add(new Field(headerBlock));
         }
     }
 
