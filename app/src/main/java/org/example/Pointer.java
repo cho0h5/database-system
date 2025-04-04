@@ -32,4 +32,8 @@ class Pointer {
     public int getOffset() {
         return this.offset;
     }
+
+    static public int size() {
+        return 4;
+    }
 }

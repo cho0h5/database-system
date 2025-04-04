@@ -9,21 +9,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BlockManager implements AutoCloseable {
-    public static final int BLOCK_SIZE = 128;
-
+    private final int blockSize;
     private final FileChannel fileChannel;
     private final Map<Integer, ByteBuffer> cache = new HashMap<>();
 
-    public BlockManager(String fileName) throws IOException {
+    public BlockManager(final int blockSize, String fileName) throws IOException {
+        this.blockSize = blockSize;
         this.fileChannel = FileChannel.open(Paths.get(fileName), StandardOpenOption.READ, StandardOpenOption.WRITE,
                 StandardOpenOption.CREATE);
     }
 
     public ByteBuffer readBlock(int blockNum) {
-        return cache.computeIfAbsent(blockNum, index -> {
+        ByteBuffer byteBuffer = cache.computeIfAbsent(blockNum, index -> {
             try {
-                ByteBuffer buffer = ByteBuffer.allocate(BLOCK_SIZE);
-                fileChannel.position((long) blockNum * BLOCK_SIZE);
+                ByteBuffer buffer = ByteBuffer.allocate(blockSize);
+                fileChannel.position((long) blockNum * blockSize);
                 fileChannel.read(buffer);
                 buffer.flip();
                 return buffer;
@@ -31,11 +31,14 @@ public class BlockManager implements AutoCloseable {
                 throw new RuntimeException(e);
             }
         });
+
+        byteBuffer.clear();
+        return byteBuffer;
     }
 
     public void flush() throws IOException {
         for (Map.Entry<Integer, ByteBuffer> entry : cache.entrySet()) {
-            fileChannel.position((long) entry.getKey() * BLOCK_SIZE);
+            fileChannel.position((long) entry.getKey() * blockSize);
             fileChannel.write(entry.getValue().rewind());
         }
     }

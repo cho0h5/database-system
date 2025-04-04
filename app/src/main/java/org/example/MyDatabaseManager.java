@@ -3,11 +3,14 @@ package org.example;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Optional;
 
 class MyDatabaseManager implements DatabaseManager {
+    public static final int BLOCK_SIZE = 64;
+
     @Override
     public void createTable(String fileName, List<Field> fields) {
-        try (BlockManager blockManager = new BlockManager(fileName)) {
+        try (BlockManager blockManager = new BlockManager(BLOCK_SIZE, fileName)) {
             ByteBuffer headerBlock = blockManager.readBlock(0);
             headerBlock.clear(); // FIXME: this gonna overwrite file
 
@@ -20,21 +23,35 @@ class MyDatabaseManager implements DatabaseManager {
         }
     }
 
-    public void insertRecord(BlockManager blockManager, Record record) {
+    public void insertRecord(BlockManager blockManager, Record newRecord) {
         ByteBuffer headerBlock = blockManager.readBlock(0);
         Metadata metadata = new Metadata(headerBlock);
 
+        // find last record
         Pointer lastRecordPointer = findLastRecordPointer(blockManager, metadata);
 
-        // 1. find last record
-        // 2. check if there is enough space for new record
-        // if not, create new block
-        // 3. put it there
+        // determine next record position
+        Pointer newPointer = new Pointer(1, 0);
+        if (!lastRecordPointer.isNullPointer()) {
+            Record lastRecord = new Record(blockManager, metadata.getFields(), lastRecordPointer);
+            final int usedSpace = lastRecordPointer.getOffset() + lastRecord.size();
+            final int freeSpace = BLOCK_SIZE - usedSpace;
+
+            if (freeSpace < newRecord.size()) {
+                // next pointer: new block
+            } else {
+                // next pointer: next byte
+            }
+        }
+
+        // insert new record
+        newRecord.setNextPointer(Optional.of(new Pointer(0, 0)));
+        newRecord.write(blockManager, metadata.getFields(), newPointer);
     }
 
     @Override
     public void insertRecords(String fileName, List<Record> records) {
-        try (BlockManager blockManager = new BlockManager(fileName)) {
+        try (BlockManager blockManager = new BlockManager(BLOCK_SIZE, fileName)) {
             for (Record record : records) {
                 insertRecord(blockManager, record);
             }
@@ -45,13 +62,13 @@ class MyDatabaseManager implements DatabaseManager {
 
     @Override
     public void searchField(String fileName, String fieldName) {
-        // TODO Auto-generated method stub
+        // TODO: Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'searchField'");
     }
 
     @Override
     public void searchRecord(String fileName, String fieldName, String minValue, String maxValue) {
-        // TODO Auto-generated method stub
+        // TODO: Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'searchRecord'");
     }
 
