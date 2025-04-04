@@ -53,7 +53,7 @@ class Record {
         byteBuffer.put((byte) nullBitmap);
 
         for (int i = 0; i < fields.size(); i++) {
-            if (this.fields.get(i).isPresent()) {
+            if (!this.fields.get(i).isPresent()) {
                 continue;
             }
 
