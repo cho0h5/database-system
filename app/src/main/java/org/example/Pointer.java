@@ -18,7 +18,7 @@ class Pointer {
 
     public void write(ByteBuffer byteBuffer) {
         byteBuffer.putShort((short) this.block); // block
-        byteBuffer.putShort((short) this.block); // offset
+        byteBuffer.putShort((short) this.offset); // offset
     }
 
     public boolean isNullPointer() {
