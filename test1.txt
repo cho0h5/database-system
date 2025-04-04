@@ -10,10 +10,16 @@ author 20    // 세 번째 필드 이름과 크기
 
 insert-record              // 레코드 추가 명령
 book.db                    // 파일 이름
-3                          // 추가하고자하는 레코드 수
+9                          // 추가하고자하는 레코드 수
 0001;The Selfish Gene;null // 추가하려는 레코드 내용
 0002;null            ;null
 0003;What If?........;Randall Munroe......
+0004;null            ;Carl Sagan..........
+0005;Self Reliance...;Ralph Waldo Emerson.
+0006;Animal Farm.....;George Orwell.......
+0007;The Talmud......;null
+0008;The Crowd.......;Gustave Le Bon......
+0009;null            ;null
 
 search-field // 필드 검색 명령
 book.db      // 파일 이름
@@ -35,13 +41,7 @@ id            // 검색하고자하는 필드 이름
 
 insert-record
 book.db
-7
-0004;null            ;Carl Sagan..........
-0005;Self Reliance...;Ralph Waldo Emerson.
-0006;Animal Farm.....;George Orwell.......
-0007;The Talmud......;null
-0008;The Crowd.......;Gustave Le Bon......
-0009;null            ;null
+1
 0010;The Bible.......;null
 
 search-field
