@@ -23,7 +23,7 @@ class Record {
         final int nullBitmap = Byte.toUnsignedInt(byteBuffer.get());
 
         for (int i = 0; i < fields.size(); i++) {
-            if ((nullBitmap & (1 << (7 - i))) == 0) {
+            if ((nullBitmap & (1 << (7 - i))) != 0) {
                 this.fields.add(Optional.empty());
                 continue;
             }
@@ -43,21 +43,17 @@ class Record {
 
         int nullBitmap = 0;
         for (int i = 0; i < fields.size(); i++) {
-            if (this.fields.get(i).isPresent()) {
-                continue;
+            if (!this.fields.get(i).isPresent()) {
+                nullBitmap |= (1 << (7 - i));
             }
-
-            nullBitmap |= (1 << (7 - i));
         }
 
         byteBuffer.put((byte) nullBitmap);
 
         for (int i = 0; i < fields.size(); i++) {
-            if (!this.fields.get(i).isPresent()) {
-                continue;
+            if (this.fields.get(i).isPresent()) {
+                byteBuffer.put(this.fields.get(i).get().getBytes());
             }
-
-            byteBuffer.put(this.fields.get(i).get().getBytes());
         }
 
         this.nextPointer.get().write(byteBuffer);

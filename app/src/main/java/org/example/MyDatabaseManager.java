@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 class MyDatabaseManager implements DatabaseManager {
-    public static final int BLOCK_SIZE = 64;
+    public static final int BLOCK_SIZE = 128;
 
     @Override
     public void createTable(String fileName, List<Field> fields) {
