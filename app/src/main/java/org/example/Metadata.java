@@ -24,6 +24,8 @@ class Metadata {
     }
 
     public void write(ByteBuffer headerBlock) {
+        headerBlock.clear();
+
         // pointer
         firstRecordPointer.write(headerBlock);
 
@@ -42,5 +44,9 @@ class Metadata {
 
     public List<Field> getFields() {
         return fields;
+    }
+
+    public void setFirstRecordPointer(Pointer firstRecordPointer) {
+        this.firstRecordPointer = firstRecordPointer;
     }
 }

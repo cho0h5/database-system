@@ -32,7 +32,9 @@ class MyDatabaseManager implements DatabaseManager {
 
         // determine next record position
         Pointer newPointer = new Pointer(1, 0);
-        if (!lastRecordPointer.isNullPointer()) {
+        if (lastRecordPointer.isNullPointer()) {
+            metadata.setFirstRecordPointer(newPointer);
+        } else {
             Record lastRecord = new Record(blockManager, metadata.getFields(), lastRecordPointer);
             final int usedSpace = lastRecordPointer.getOffset() + lastRecord.size();
             final int freeSpace = BLOCK_SIZE - usedSpace;
@@ -46,6 +48,7 @@ class MyDatabaseManager implements DatabaseManager {
         }
 
         // insert new record
+        metadata.write(headerBlock);
         newRecord.setNextPointer(Optional.of(new Pointer(0, 0)));
         newRecord.write(blockManager, metadata.getFields(), newPointer);
     }
