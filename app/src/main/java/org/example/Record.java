@@ -59,6 +59,8 @@ class Record {
 
             byteBuffer.put(this.fields.get(i).get().getBytes());
         }
+
+        this.nextPointer.get().write(byteBuffer);
     }
 
     public Optional<Pointer> getNextPointer() {
