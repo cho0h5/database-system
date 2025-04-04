@@ -121,6 +121,7 @@ class CommandParser {
         final int recordCount = nextValidLine(scanner).map(Integer::parseInt).orElseThrow();
         for (int i = 0; i < recordCount; i++) {
             List<Optional<String>> fields = Arrays.stream(nextValidLine(scanner).orElseThrow().split(";"))
+                    .map(String::trim)
                     .map(field -> field.equals("null") ? Optional.empty() : Optional.of(field))
                     .map(option -> option.map(String::valueOf))
                     .collect(Collectors.toList());
