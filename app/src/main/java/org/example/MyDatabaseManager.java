@@ -84,7 +84,7 @@ class MyDatabaseManager implements DatabaseManager {
         Pointer pointer = metadata.getFirstRecordPointer();
         Record record = new Record(blockManager, metadata.getFields(), pointer);
 
-        while (record.getNextPointer().get().isNullPointer()) {
+        while (!record.getNextPointer().get().isNullPointer()) {
             pointer = record.getNextPointer().get();
             record = new Record(blockManager, metadata.getFields(), pointer);
         }
