@@ -38,9 +38,10 @@ class MyDatabaseManager implements DatabaseManager {
             final int freeSpace = BLOCK_SIZE - usedSpace;
 
             if (freeSpace < newRecord.size()) {
-                // next pointer: new block
+                newPointer = new Pointer(lastRecordPointer.getBlock() + 1, 0);
             } else {
-                // next pointer: next byte
+                newPointer = new Pointer(lastRecordPointer.getBlock(),
+                        lastRecordPointer.getOffset() + lastRecord.size());
             }
         }
 
