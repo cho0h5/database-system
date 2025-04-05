@@ -9,9 +9,9 @@ class MyDatabaseManager implements DatabaseManager {
     public static final int BLOCK_SIZE = 128;
 
     @Override
-    public void createTable(String fileName, List<Field> fields) {
+    public void createTable(final String fileName, final List<Field> fields) {
         try (BlockManager blockManager = new BlockManager(BLOCK_SIZE, fileName)) {
-            ByteBuffer headerBlock = blockManager.readBlock(0);
+            final ByteBuffer headerBlock = blockManager.readBlock(0);
             headerBlock.clear(); // FIXME: this gonna overwrite file
 
             final Pointer firstRecordPointer = new Pointer(0, 0);
@@ -23,12 +23,12 @@ class MyDatabaseManager implements DatabaseManager {
         }
     }
 
-    public void insertRecord(BlockManager blockManager, Record newRecord) {
-        ByteBuffer headerBlock = blockManager.readBlock(0);
-        Metadata metadata = new Metadata(headerBlock);
+    public void insertRecord(final BlockManager blockManager, final Record newRecord) {
+        final ByteBuffer headerBlock = blockManager.readBlock(0);
+        final Metadata metadata = new Metadata(headerBlock);
 
         // find last record
-        Pointer lastRecordPointer = findLastRecordPointer(blockManager, metadata);
+        final Pointer lastRecordPointer = findLastRecordPointer(blockManager, metadata);
 
         // determine next record position
         Pointer newPointer = new Pointer(1, 0);
@@ -60,7 +60,7 @@ class MyDatabaseManager implements DatabaseManager {
     }
 
     @Override
-    public void insertRecords(String fileName, List<Record> records) {
+    public void insertRecords(final String fileName, final List<Record> records) {
         try (BlockManager blockManager = new BlockManager(BLOCK_SIZE, fileName)) {
             for (Record record : records) {
                 insertRecord(blockManager, record);
@@ -71,7 +71,7 @@ class MyDatabaseManager implements DatabaseManager {
     }
 
     @Override
-    public void searchField(String fileName, String fieldName) {
+    public void searchField(final String fileName, final String fieldName) {
         try (BlockManager blockManager = new BlockManager(BLOCK_SIZE, fileName)) {
             final ByteBuffer headerBlock = blockManager.readBlock(0);
             final Metadata metadata = new Metadata(headerBlock);
@@ -92,7 +92,8 @@ class MyDatabaseManager implements DatabaseManager {
     }
 
     @Override
-    public void searchRecord(String fileName, String fieldName, String minValue, String maxValue) {
+    public void searchRecord(final String fileName, final String fieldName, final String minValue,
+            final String maxValue) {
         try (BlockManager blockManager = new BlockManager(BLOCK_SIZE, fileName)) {
             final ByteBuffer headerBlock = blockManager.readBlock(0);
             final Metadata metadata = new Metadata(headerBlock);
@@ -115,7 +116,7 @@ class MyDatabaseManager implements DatabaseManager {
         }
     }
 
-    Pointer findLastRecordPointer(BlockManager blockManager, final Metadata metadata) {
+    Pointer findLastRecordPointer(final BlockManager blockManager, final Metadata metadata) {
         Pointer current = metadata.getFirstRecordPointer();
         Pointer last = current;
 
