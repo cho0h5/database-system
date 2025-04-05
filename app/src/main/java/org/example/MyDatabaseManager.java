@@ -83,18 +83,15 @@ class MyDatabaseManager implements DatabaseManager {
     }
 
     Pointer findLastRecordPointer(BlockManager blockManager, final Metadata metadata) {
-        if (metadata.getFirstRecordPointer().isNullPointer()) {
-            return metadata.getFirstRecordPointer();
+        Pointer current = metadata.getFirstRecordPointer();
+        Pointer last = current;
+
+        for (Record record : new RecordIterable(blockManager, metadata.getFields(),
+                current)) {
+            last = current;
+            current = record.getNextPointer().get();
         }
 
-        Pointer pointer = metadata.getFirstRecordPointer();
-        Record record = new Record(blockManager, metadata.getFields(), pointer);
-
-        while (!record.getNextPointer().get().isNullPointer()) {
-            pointer = record.getNextPointer().get();
-            record = new Record(blockManager, metadata.getFields(), pointer);
-        }
-
-        return pointer;
+        return last;
     }
 }

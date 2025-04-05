@@ -95,7 +95,7 @@ class RecordIterator implements Iterator<Record> {
 
     @Override
     public boolean hasNext() {
-        return currentPointer.isNullPointer();
+        return !currentPointer.isNullPointer();
     }
 
     @Override
