@@ -72,8 +72,20 @@ class MyDatabaseManager implements DatabaseManager {
 
     @Override
     public void searchField(String fileName, String fieldName) {
-        // TODO: Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'searchField'");
+        try (BlockManager blockManager = new BlockManager(BLOCK_SIZE, fileName)) {
+            ByteBuffer headerBlock = blockManager.readBlock(0);
+            Metadata metadata = new Metadata(headerBlock);
+            final int fieldIndex = Field.indexOf(metadata.getFields(), fieldName);
+
+            new RecordIterable(blockManager, metadata.getFields(), metadata.getFirstRecordPointer())
+                    .stream()
+                    .map(record -> record.fields.get(fieldIndex))
+                    .map(opt -> opt.orElse("null"))
+                    .forEach(System.out::println);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

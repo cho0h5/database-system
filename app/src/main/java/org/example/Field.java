@@ -1,6 +1,7 @@
 package org.example;
 
 import java.nio.ByteBuffer;
+import java.util.List;
 
 class Field {
     String name;
@@ -25,5 +26,14 @@ class Field {
         byteBuffer.put((byte) nameBytes.length); // length of field name
         byteBuffer.put(nameBytes); // field name
         byteBuffer.put((byte) this.size); // field type
+    }
+
+    public static int indexOf(List<Field> fields, String fieldName) {
+        for (int i = 0; i < fields.size(); i++) {
+            if (fields.get(i).name.equals(fieldName)) {
+                return i;
+            }
+        }
+        throw new IllegalArgumentException("Field not found: " + fieldName);
     }
 }
