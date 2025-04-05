@@ -2,7 +2,9 @@ package org.example;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 class Record {
@@ -77,5 +79,33 @@ class Record {
         }
 
         return 1 + totalFieldSize + Pointer.size();
+    }
+}
+
+class RecordIterator implements Iterator<Record> {
+    private final BlockManager blockManager;
+    private final List<Field> fields;
+    private Pointer currentPointer;
+
+    public RecordIterator(BlockManager blockManager, List<Field> fields, Pointer firstPointer) {
+        this.blockManager = blockManager;
+        this.fields = fields;
+        this.currentPointer = firstPointer;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return currentPointer.isNullPointer();
+    }
+
+    @Override
+    public Record next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
+
+        Record record = new Record(blockManager, fields, currentPointer);
+        currentPointer = record.getNextPointer().get();
+        return record;
     }
 }
