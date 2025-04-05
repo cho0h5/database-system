@@ -11,10 +11,12 @@ public class App {
         }
 
         String fileName = args[0];
-        DatabaseManager databaseManager = new MyDatabaseManager();
+        DatabaseManager myDatabaseManager = new MyDatabaseManager();
+        DatabaseManager mysqlDatabaseManager = new MysqlDatabaseManager();
+        DatabaseManager duelDatabaseManager = new DuelDatabaseManager(myDatabaseManager, mysqlDatabaseManager);
 
         try {
-            List<Command> commands = CommandParser.parseCommands(databaseManager, fileName);
+            List<Command> commands = CommandParser.parseCommands(duelDatabaseManager, fileName);
 
             for (Command command : commands) {
                 command.execute();
