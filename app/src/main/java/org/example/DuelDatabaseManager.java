@@ -25,14 +25,18 @@ public class DuelDatabaseManager implements DatabaseManager {
 
     @Override
     public void searchField(final String fileName, final String fieldName) {
+        System.out.println("======== My DB ========");
         a.searchField(fileName, fieldName);
+        System.out.println("======== MySQL ========");
         b.searchField(fileName, fieldName);
     }
 
     @Override
     public void searchRecord(final String fileName, final String fieldName, final String minValue,
             final String maxValue) {
+        System.out.println("======== My DB ========");
         a.searchRecord(fileName, fieldName, minValue, maxValue);
+        System.out.println("======== MySQL ========");
         b.searchRecord(fileName, fieldName, minValue, maxValue);
     }
 }
