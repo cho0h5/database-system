@@ -4,8 +4,8 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 class Field {
-    String name;
-    int size;
+    private String name;
+    private int size;
 
     public Field(String name, int size) {
         this.name = name;
@@ -35,5 +35,13 @@ class Field {
             }
         }
         throw new IllegalArgumentException("Field not found: " + fieldName);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getSize() {
+        return size;
     }
 }

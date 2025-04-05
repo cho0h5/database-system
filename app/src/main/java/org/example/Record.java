@@ -33,7 +33,7 @@ class Record {
             }
 
             Field field = fields.get(i);
-            byte[] fieldValue = new byte[field.size];
+            byte[] fieldValue = new byte[field.getSize()];
             byteBuffer.get(fieldValue);
             this.fields.add(Optional.of(new String(fieldValue)));
         }
