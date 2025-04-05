@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 class Record {
     List<Optional<String>> fields;
@@ -124,5 +126,9 @@ class RecordIterable implements Iterable<Record> {
     @Override
     public Iterator<Record> iterator() {
         return new RecordIterator(blockManager, fields, currentPointer);
+    }
+
+    public Stream<Record> stream() {
+        return StreamSupport.stream(this.spliterator(), false);
     }
 }
