@@ -83,7 +83,7 @@ class Record {
 }
 
 class RecordIterator implements Iterator<Record> {
-    private final BlockManager blockManager;
+    private BlockManager blockManager;
     private final List<Field> fields;
     private Pointer currentPointer;
 
@@ -107,5 +107,22 @@ class RecordIterator implements Iterator<Record> {
         Record record = new Record(blockManager, fields, currentPointer);
         currentPointer = record.getNextPointer().get();
         return record;
+    }
+}
+
+class RecordIterable implements Iterable<Record> {
+    private BlockManager blockManager;
+    private final List<Field> fields;
+    private Pointer currentPointer;
+
+    public RecordIterable(BlockManager blockManager, List<Field> fields, Pointer firstPointer) {
+        this.blockManager = blockManager;
+        this.fields = fields;
+        this.currentPointer = firstPointer;
+    }
+
+    @Override
+    public Iterator<Record> iterator() {
+        return new RecordIterator(blockManager, fields, currentPointer);
     }
 }
