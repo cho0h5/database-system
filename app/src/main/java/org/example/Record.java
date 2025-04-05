@@ -84,7 +84,7 @@ class Record {
         return 1 + totalFieldSize + Pointer.size();
     }
 
-    public static void printRecords(Metadata metadata, List<Record> records) {
+    public static void printRecords(final Metadata metadata, final List<Record> records) {
         List<Integer> columnWidths = metadata.getFields().stream()
                 .map(Field::getSize)
                 .toList();
@@ -105,6 +105,12 @@ class Record {
             }
             System.out.println();
         });
+    }
+
+    public static void printFieldValues(final Field field, final List<String> values) {
+        System.out.println(field.getName());
+        System.out.println("-".repeat(field.getSize()));
+        values.forEach(System.out::println);
     }
 }
 

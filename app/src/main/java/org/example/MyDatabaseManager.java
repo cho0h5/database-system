@@ -77,12 +77,15 @@ class MyDatabaseManager implements DatabaseManager {
             final Metadata metadata = new Metadata(headerBlock);
             final int fieldIndex = Field.indexOf(metadata.getFields(), fieldName);
 
-            new RecordIterable(blockManager, metadata.getFields(), metadata.getFirstRecordPointer())
+            List<String> values = new RecordIterable(blockManager, metadata.getFields(),
+                    metadata.getFirstRecordPointer())
                     .stream()
                     .map(record -> record.fields.get(fieldIndex))
                     .map(opt -> opt.orElse("null"))
-                    .forEach(System.out::println);
+                    .toList();
 
+            Record.printFieldValues(metadata.getFields().get(fieldIndex), values);
+            System.out.println();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -106,6 +109,7 @@ class MyDatabaseManager implements DatabaseManager {
                     .toList();
 
             Record.printRecords(metadata, filtered);
+            System.out.println();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
