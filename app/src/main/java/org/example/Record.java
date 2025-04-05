@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -81,6 +82,29 @@ class Record {
         }
 
         return 1 + totalFieldSize + Pointer.size();
+    }
+
+    public static void printRecords(Metadata metadata, List<Record> records) {
+        List<Integer> columnWidths = metadata.getFields().stream()
+                .map(Field::getSize)
+                .toList();
+
+        IntStream.range(0, metadata.getFields().size()).forEach(
+                i -> System.out.printf("%-" + columnWidths.get(i) + "s ", metadata.getFields().get(i).getName()));
+        System.out.println();
+
+        IntStream.range(0, metadata.getFields().size())
+                .forEach(i -> System.out.printf("-".repeat(columnWidths.get(i)) + " "));
+        System.out.println();
+
+        records.stream().forEach(record -> {
+            for (int i = 0; i < record.fields.size(); i++) {
+                Optional<String> fieldValue = record.fields.get(i);
+                String value = fieldValue.orElse("null");
+                System.out.printf("%-" + columnWidths.get(i) + "s ", value);
+            }
+            System.out.println();
+        });
     }
 }
 

@@ -95,34 +95,17 @@ class MyDatabaseManager implements DatabaseManager {
             final Metadata metadata = new Metadata(headerBlock);
             final int fieldIndex = Field.indexOf(metadata.getFields(), fieldName);
 
-            List<Integer> columnWidths = metadata.getFields().stream()
-                    .map(f -> f.getName().length())
-                    .toList();
-
-            for (int i = 0; i < metadata.getFields().size(); i++) {
-                System.out.printf("%-" + columnWidths.get(i) + "s", metadata.getFields().get(i).getName());
-            }
-            System.out.println();
-            for (int i = 0; i < metadata.getFields().size(); i++) {
-                System.out.print("-".repeat(columnWidths.get(i)) + " ");
-            }
-            System.out.println();
-
-            new RecordIterable(blockManager, metadata.getFields(), metadata.getFirstRecordPointer())
+            final List<Record> filtered = new RecordIterable(blockManager, metadata.getFields(),
+                    metadata.getFirstRecordPointer())
                     .stream()
                     .filter(record -> {
                         Optional<String> option = record.fields.get(fieldIndex);
                         return option.isPresent() && option.get().compareTo(minValue) >= 0
                                 && option.get().compareTo(maxValue) <= 0;
                     })
-                    .forEach(record -> {
-                        for (Optional<String> fieldValue : record.fields) {
-                            String value = fieldValue.orElse("null");
-                            System.out.printf("%-20s", value);
-                        }
-                        System.out.println();
-                    });
+                    .toList();
 
+            Record.printRecords(metadata, filtered);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
